@@ -1,18 +1,15 @@
-// src/api.js
+// frontend/src/api.js
 import axios from "axios";
 
-// ✅ Detectar entorno automáticamente
-const isLocal =
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.hostname === ""; // algunos navegadores dev pueden dejarlo vacío
+// Detectar entorno
+const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 
-// ✅ URL base según el entorno
+// Usar API correcta según entorno
 const API_URL = isLocal
-  ? "http://127.0.0.1:8000/api/" // 🖥️ Backend local (Django corriendo en tu PC)
-  : "https://sistema-cursos.onrender.com/api/"; // ☁️ Backend desplegado en Render
+  ? "http://127.0.0.1:8000/api/"
+  : "https://sistema-cursos.onrender.com/api/";
 
-// ✅ Crear instancia Axios con configuración común
+// Crear instancia de Axios
 export const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -20,11 +17,10 @@ export const api = axios.create({
   },
 });
 
-// ✅ Manejo global de errores opcional (útil para debug)
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("❌ Error en la API:", error);
-    return Promise.reject(error);
-  }
-);
+// Manejar subida de archivos (multipart/form-data)
+export const apiMultipart = axios.create({
+  baseURL: API_URL,
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+});

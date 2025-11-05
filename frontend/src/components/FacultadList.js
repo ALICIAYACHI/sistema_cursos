@@ -1,8 +1,7 @@
+// frontend/src/components/FacultadList.js
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../api"; // 🔹 Importa tu cliente axios ya configurado
 import { Button, Form, Modal } from "react-bootstrap";
-
-const API_URL = "http://127.0.0.1:8000/api/facultades/";
 
 function FacultadList() {
   const [facultades, setFacultades] = useState([]);
@@ -12,7 +11,7 @@ function FacultadList() {
     nombre: "",
     decano: "",
     descripcion: "",
-    logo: null, // el campo correcto
+    logo: null,
   });
 
   useEffect(() => {
@@ -21,16 +20,19 @@ function FacultadList() {
 
   const fetchFacultades = async () => {
     try {
-      const res = await axios.get(API_URL);
+      const res = await api.get("facultades/");
       setFacultades(res.data);
     } catch (err) {
-      console.error("Error al cargar facultades:", err);
+      console.error("❌ Error al cargar facultades:", err);
     }
   };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData({ ...formData, [name]: files ? files[0] : value });
+    setFormData({
+      ...formData,
+      [name]: files && files.length > 0 ? files[0] : value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -43,11 +45,11 @@ function FacultadList() {
 
     try {
       if (editingFacultad) {
-        await axios.put(`${API_URL}${editingFacultad.id}/`, data, {
+        await api.put(`facultades/${editingFacultad.id}/`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        await axios.post(API_URL, data, {
+        await api.post("facultades/", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
@@ -57,7 +59,8 @@ function FacultadList() {
       setEditingFacultad(null);
       setFormData({ nombre: "", decano: "", descripcion: "", logo: null });
     } catch (err) {
-      console.error("Error al guardar facultad:", err);
+      console.error("❌ Error al guardar facultad:", err.response?.data || err);
+      alert("Error al guardar la facultad. Revisa la consola.");
     }
   };
 
@@ -67,15 +70,19 @@ function FacultadList() {
       nombre: facultad.nombre,
       decano: facultad.decano,
       descripcion: facultad.descripcion,
-      logo: null, // solo se actualiza si sube uno nuevo
+      logo: null,
     });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("¿Deseas eliminar esta facultad?")) {
-      await axios.delete(`${API_URL}${id}/`);
-      fetchFacultades();
+      try {
+        await api.delete(`facultades/${id}/`);
+        fetchFacultades();
+      } catch (err) {
+        console.error("❌ Error al eliminar facultad:", err);
+      }
     }
   };
 

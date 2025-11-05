@@ -1,9 +1,7 @@
+// frontend/src/components/CursoList.js
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { api } from "../api"; // 🔹 Usa el cliente axios configurado
 import { Button, Form, Modal } from "react-bootstrap";
-
-const API_URL = "http://127.0.0.1:8000/api/cursos/";
-const FACULTADES_URL = "http://127.0.0.1:8000/api/facultades/";
 
 function CursoList() {
   const [cursos, setCursos] = useState([]);
@@ -16,7 +14,7 @@ function CursoList() {
     horario: "",
     creditos: "",
     facultad: "",
-    portada: null, // <-- CORREGIDO
+    portada: null,
   });
 
   useEffect(() => {
@@ -26,25 +24,28 @@ function CursoList() {
 
   const fetchCursos = async () => {
     try {
-      const res = await axios.get(API_URL);
+      const res = await api.get("cursos/");
       setCursos(res.data);
     } catch (err) {
-      console.error("Error al cargar cursos:", err);
+      console.error("❌ Error al cargar cursos:", err);
     }
   };
 
   const fetchFacultades = async () => {
     try {
-      const res = await axios.get(FACULTADES_URL);
+      const res = await api.get("facultades/");
       setFacultades(res.data);
     } catch (err) {
-      console.error("Error al cargar facultades:", err);
+      console.error("❌ Error al cargar facultades:", err);
     }
   };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setFormData({ ...formData, [name]: files ? files[0] : value });
+    setFormData({
+      ...formData,
+      [name]: files && files.length > 0 ? files[0] : value,
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -57,11 +58,11 @@ function CursoList() {
 
     try {
       if (editingCurso) {
-        await axios.put(`${API_URL}${editingCurso.id}/`, data, {
+        await api.put(`cursos/${editingCurso.id}/`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        await axios.post(API_URL, data, {
+        await api.post("cursos/", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
@@ -78,7 +79,8 @@ function CursoList() {
         portada: null,
       });
     } catch (err) {
-      console.error("Error al guardar curso:", err);
+      console.error("❌ Error al guardar curso:", err.response?.data || err);
+      alert("Error al guardar el curso. Revisa la consola.");
     }
   };
 
@@ -90,15 +92,19 @@ function CursoList() {
       horario: curso.horario,
       creditos: curso.creditos,
       facultad: curso.facultad,
-      portada: null, // solo cambia si sube una nueva
+      portada: null,
     });
     setShowModal(true);
   };
 
   const handleDelete = async (id) => {
     if (window.confirm("¿Deseas eliminar este curso?")) {
-      await axios.delete(`${API_URL}${id}/`);
-      fetchCursos();
+      try {
+        await api.delete(`cursos/${id}/`);
+        fetchCursos();
+      } catch (err) {
+        console.error("❌ Error al eliminar curso:", err);
+      }
     }
   };
 
