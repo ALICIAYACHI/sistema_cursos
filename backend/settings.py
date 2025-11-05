@@ -1,6 +1,6 @@
 """
 Django settings for backend project.
-Adaptado para funcionar localmente (MySQL) y en Render (PostgreSQL).
+Configurado para funcionar localmente (MySQL) y en Render (PostgreSQL).
 """
 
 from pathlib import Path
@@ -74,7 +74,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],  # opcional
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,15 +91,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # ===========================
 # BASE DE DATOS
 # ===========================
-if os.environ.get('RENDER'):  # ✅ en Render
+if os.environ.get('RENDER'):  # ✅ entorno Render (usa PostgreSQL)
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
+            default=os.environ.get('DATABASE_URL', 'postgresql://foro_db_r21o_user:oeAV5tDv3n54rYCQEIxwR2GomCPHwiQC@dpg-d3lulmt6ubrc73edka50-a.oregon-postgres.render.com/foro_db_r21o'),
             conn_max_age=600,
             ssl_require=True
         )
     }
-else:  # ✅ local (MySQL)
+else:  # ✅ entorno local (usa MySQL)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -135,10 +135,6 @@ USE_TZ = True
 # ===========================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# ⚠️ IMPORTANTE: Elimina esta línea si no existe la carpeta “static/”
-# STATICFILES_DIRS = [BASE_DIR / "static"]
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'

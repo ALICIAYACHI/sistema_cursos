@@ -1,0 +1,21 @@
+# .gitignore
+
+# Entorno virtual
+venv/
+
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Bases de datos locales
+*.db
+*.sqlite3
+
+# Archivos estáticos generados automáticamente
+staticfiles/
+
+# Variables de entorno
+.env
+venv/ 
