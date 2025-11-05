@@ -15,11 +15,8 @@ django-cors-headers==4.9.0
 # ======================
 # 🗄️ Bases de datos
 # ======================
-# Para PostgreSQL (Render)
 dj-database-url==3.0.1
 psycopg2-binary==2.9.11
-
-# Para MySQL (local)
 mysqlclient==2.2.7
 
 # ======================
@@ -31,3 +28,8 @@ whitenoise==6.11.0
 # 🖼️ Manejo de imágenes
 # ======================
 Pillow==12.0.0
+
+# ======================
+# 🚀 Servidor de producción (Render)
+# ======================
+gunicorn==23.0.0
