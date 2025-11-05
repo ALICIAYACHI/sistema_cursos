@@ -16,7 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # CONFIGURACIÓN GENERAL
 # ===========================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temporal')
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+
+# Render define la variable 'RENDER' en entorno de producción
+DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
@@ -72,7 +74,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # puedes crear una carpeta templates si usas vistas HTML
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,7 +99,7 @@ if os.environ.get('RENDER'):  # ✅ en Render
             ssl_require=True
         )
     }
-else:  # ✅ local
+else:  # ✅ local (MySQL)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -132,8 +134,11 @@ USE_TZ = True
 # ARCHIVOS ESTÁTICOS Y MEDIA
 # ===========================
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# ⚠️ IMPORTANTE: Elimina esta línea si no existe la carpeta “static/”
+# STATICFILES_DIRS = [BASE_DIR / "static"]
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
