@@ -21,7 +21,12 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temporal')
 DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
-CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
+
+# ✅ Confianza para CSRF desde Render
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+    'https://sistema-cursos-frontend.onrender.com',
+]
 
 # ===========================
 # APLICACIONES INSTALADAS
@@ -46,7 +51,7 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # ===========================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # debe ir arriba
+    'corsheaders.middleware.CorsMiddleware',  # ✅ debe ir arriba
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # ⚡ para servir estáticos en Render
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,10 +66,15 @@ MIDDLEWARE = [
 # CORS CONFIG
 # ===========================
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:3000",                      # desarrollo local
+    "http://127.0.0.1:3000",                      # desarrollo local alternativo
+    "https://sistema-cursos-frontend.onrender.com"  # ✅ frontend en Render
 ]
+
 CORS_ALLOW_CREDENTIALS = True
+
+# Si necesitas permitir temporalmente todos los orígenes (solo para debug)
+# CORS_ALLOW_ALL_ORIGINS = True
 
 # ===========================
 # URLS Y WSGI
@@ -94,7 +104,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 if os.environ.get('RENDER'):  # ✅ entorno Render (usa PostgreSQL)
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL', 'postgresql://foro_db_r21o_user:oeAV5tDv3n54rYCQEIxwR2GomCPHwiQC@dpg-d3lulmt6ubrc73edka50-a.oregon-postgres.render.com/foro_db_r21o'),
+            default=os.environ.get(
+                'DATABASE_URL',
+                'postgresql://foro_db_r21o_user:oeAV5tDv3n54rYCQEIxwR2GomCPHwiQC@dpg-d3lulmt6ubrc73edka50-a.oregon-postgres.render.com/foro_db_r21o'
+            ),
             conn_max_age=600,
             ssl_require=True
         )
