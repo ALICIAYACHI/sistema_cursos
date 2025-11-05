@@ -11,8 +11,7 @@ from django.http import JsonResponse
 
 def home(request):
     """
-    Vista raíz de la API.
-    Muestra un mensaje simple para confirmar que el backend funciona.
+    Vista raíz simple para comprobar conexión con la API.
     """
     return JsonResponse({
         "message": "Bienvenido a la API del Sistema de Cursos 🎓",
@@ -26,9 +25,9 @@ def home(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('cursos.urls')),  # ✅ rutas de la app cursos
-    path('', home, name='home'),           # 👈 raíz informativa
+    path('api/', include('cursos.urls')),
+    path('', home, name='home'),
 ]
 
-# ✅ Servir archivos media en desarrollo y Render
+# Servir archivos media en desarrollo y producción (Render)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

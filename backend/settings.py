@@ -6,10 +6,8 @@ Configurado para funcionar localmente (MySQL) y en Render (PostgreSQL).
 from pathlib import Path
 import os
 import dj_database_url
+import mimetypes
 
-# ===========================
-# BASE DIR
-# ===========================
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ===========================
@@ -17,19 +15,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ===========================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-temporal')
 
-# Render define la variable 'RENDER' en entorno de producción
-DEBUG = 'RENDER' not in os.environ
-
+DEBUG = 'RENDER' not in os.environ  # Render define RENDER en entorno prod
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 
-# ✅ Confianza para CSRF desde Render
+# CSRF confianza desde Render
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
     'https://sistema-cursos-frontend.onrender.com',
 ]
 
 # ===========================
-# APLICACIONES INSTALADAS
+# APLICACIONES
 # ===========================
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -39,11 +35,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Apps de terceros
+    # Terceros
     'rest_framework',
     'corsheaders',
 
-    # App local
+    # Locales
     'cursos',
 ]
 
@@ -51,9 +47,9 @@ INSTALLED_APPS = [
 # MIDDLEWARE
 # ===========================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # ✅ debe ir arriba
+    'corsheaders.middleware.CorsMiddleware',  # debe ir antes de CommonMiddleware
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ⚡ para servir estáticos en Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # servir estáticos
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,12 +59,12 @@ MIDDLEWARE = [
 ]
 
 # ===========================
-# CORS CONFIG
+# CORS
 # ===========================
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",                      # desarrollo local
-    "http://127.0.0.1:3000",                      # desarrollo local alternativo
-    "https://sistema-cursos-frontend.onrender.com"  # ✅ frontend en Render
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://sistema-cursos-frontend.onrender.com"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -80,7 +76,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # opcional
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,7 +93,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # ===========================
 # BASE DE DATOS
 # ===========================
-if os.environ.get('RENDER'):  # ✅ entorno Render (usa PostgreSQL)
+if os.environ.get('RENDER'):  # entorno Render (PostgreSQL)
     DATABASES = {
         'default': dj_database_url.config(
             default=os.environ.get(
@@ -108,7 +104,7 @@ if os.environ.get('RENDER'):  # ✅ entorno Render (usa PostgreSQL)
             ssl_require=True
         )
     }
-else:  # ✅ entorno local (usa MySQL)
+else:  # entorno local (MySQL)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -149,11 +145,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ✅ Extra: servir archivos media en Render
-if os.environ.get('RENDER'):
-    # Render no sirve media automáticamente, pero esto permite mostrarlas desde el backend
-    import mimetypes
-    mimetypes.add_type("image/svg+xml", ".svg", True)
+# Servir imágenes correctamente en Render
+mimetypes.add_type("image/svg+xml", ".svg", True)
 
 # ===========================
 # REST FRAMEWORK
@@ -164,7 +157,4 @@ REST_FRAMEWORK = {
     ]
 }
 
-# ===========================
-# CLAVE PRIMARIA POR DEFECTO
-# ===========================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

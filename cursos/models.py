@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Facultad(models.Model):
     nombre = models.CharField(max_length=200)
     decano = models.CharField(max_length=200)
@@ -9,6 +10,16 @@ class Facultad(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    @property
+    def logo_url(self):
+        """
+        Devuelve la URL completa del logo si existe.
+        """
+        try:
+            return self.logo.url if self.logo else None
+        except ValueError:
+            return None
 
 
 class Curso(models.Model):
@@ -23,3 +34,13 @@ class Curso(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    @property
+    def portada_url(self):
+        """
+        Devuelve la URL completa de la portada si existe.
+        """
+        try:
+            return self.portada.url if self.portada else None
+        except ValueError:
+            return None
