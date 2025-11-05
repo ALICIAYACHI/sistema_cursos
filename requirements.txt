@@ -1,10 +1,33 @@
-asgiref==3.10.0
-dj-database-url==3.0.1
+# ======================
+# 🧠 Core de Django
+# ======================
 Django==5.2.7
-django-cors-headers==4.9.0
-djangorestframework==3.16.1
-mysqlclient==2.2.7
-pillow==12.0.0
 sqlparse==0.5.3
 tzdata==2025.2
+asgiref==3.10.0
+
+# ======================
+# 🌐 Django REST Framework
+# ======================
+djangorestframework==3.16.1
+django-cors-headers==4.9.0
+
+# ======================
+# 🗄️ Bases de datos
+# ======================
+# Para PostgreSQL (Render)
+dj-database-url==3.0.1
+psycopg2-binary==2.9.11
+
+# Para MySQL (local)
+mysqlclient==2.2.7
+
+# ======================
+# 📦 Archivos estáticos
+# ======================
 whitenoise==6.11.0
+
+# ======================
+# 🖼️ Manejo de imágenes
+# ======================
+Pillow==12.0.0
