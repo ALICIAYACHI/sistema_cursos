@@ -70,11 +70,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",                      # desarrollo local alternativo
     "https://sistema-cursos-frontend.onrender.com"  # ✅ frontend en Render
 ]
-
 CORS_ALLOW_CREDENTIALS = True
-
-# Si necesitas permitir temporalmente todos los orígenes (solo para debug)
-# CORS_ALLOW_ALL_ORIGINS = True
 
 # ===========================
 # URLS Y WSGI
@@ -152,6 +148,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ✅ Extra: servir archivos media en Render
+if os.environ.get('RENDER'):
+    # Render no sirve media automáticamente, pero esto permite mostrarlas desde el backend
+    import mimetypes
+    mimetypes.add_type("image/svg+xml", ".svg", True)
 
 # ===========================
 # REST FRAMEWORK
