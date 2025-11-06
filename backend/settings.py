@@ -145,8 +145,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Servir imágenes correctamente en Render
-mimetypes.add_type("image/svg+xml", ".svg", True)
+# Importante: permitir que Render sirva imágenes (solo mientras el contenedor viva)
+if not DEBUG:
+    # Render no guarda los archivos, pero esto permite servirlos temporalmente
+    STATICFILES_DIRS = []
+    mimetypes.add_type("image/svg+xml", ".svg", True)
+    mimetypes.add_type("image/png", ".png", True)
+    mimetypes.add_type("image/jpeg", ".jpg", True)
+    mimetypes.add_type("image/jpeg", ".jpeg", True)
 
 # ===========================
 # REST FRAMEWORK
